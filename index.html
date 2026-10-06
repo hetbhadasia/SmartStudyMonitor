@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smart Study Monitor</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <main class="card">
+    <h1>📚 <span class="grad">Smart Study Monitor</span></h1>
+    <p class="subtitle">Stay focused — we'll alert you if you doze off, cover your face or pick up your phone.</p>
+    <div id="status" class="status off"><span class="dot"></span><span id="statusText">Camera off</span></div>
+    <div class="video-wrap">
+      <img id="feed" alt="Camera feed" hidden>
+      <div id="placeholder" class="placeholder"><span>📷</span><p>Camera is off</p></div>
+    </div>
+    <button id="toggle" class="stop">Stop Camera</button>
+    <div class="tips">
+      <span>😴 Sleep detection</span>
+      <span>🙈 Face-cover detection</span>
+      <span>📵 Phone detection</span>
+    </div>
+  </main>
+<script>
+  const feed = document.getElementById('feed');
+  const btn = document.getElementById('toggle');
+  const status = document.getElementById('status');
+  const statusText = document.getElementById('statusText');
+  const placeholder = document.getElementById('placeholder');
+  let on = false;
+  function set(state) {
+    on = state;
+    fetch(on ? '/api/start' : '/api/stop', { method: 'POST' });
+    feed.src = on ? '/video_feed?' + Date.now() : '';
+    feed.hidden = !on;
+    placeholder.classList.toggle('hidden', on);
+    status.className = 'status ' + (on ? 'live' : 'off');
+    statusText.textContent = on ? 'Monitoring live' : 'Camera off';
+    btn.textContent = on ? 'Stop Camera' : 'Open Camera';
+    btn.classList.toggle('stop', on);
+  }
+  btn.onclick = () => set(!on);
+  set(true);
+</script>
+</body>
+</html>
